@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+
+# Java
+target/
+*.class
+
+# Environment
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
