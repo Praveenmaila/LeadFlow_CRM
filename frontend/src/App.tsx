@@ -7,11 +7,13 @@ import TeamPage from './pages/Team'
 import ReportsPage from './pages/Reports'
 import UsersPage from './pages/Users'
 import LeadDetailPage from './pages/LeadDetail'
+import CapturePage from './pages/Capture'
 
 const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/capture" element={<CapturePage />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
       <Route path="/leads/:id" element={<ProtectedRoute><LeadDetailPage /></ProtectedRoute>} />

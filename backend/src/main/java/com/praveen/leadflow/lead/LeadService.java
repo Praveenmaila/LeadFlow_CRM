@@ -2,6 +2,8 @@ package com.praveen.leadflow.lead;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -24,7 +26,7 @@ public class LeadService {
 
     public LeadService(DemoUserService userService) {
         this.userService = userService;
-        this.leads = List.of(
+        this.leads = Collections.synchronizedList(new ArrayList<>(List.of(
                 new LeadRecord(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Acme Retail", "ceo@acme.com", "Acme Retail", "OPEN", "manager@leadflow.local", "Maya Manager", "Website", new BigDecimal("45000"), LocalDate.now().minusDays(2)),
                 new LeadRecord(UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Northwind Traders", "ops@northwind.com", "Northwind Traders", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Referral", new BigDecimal("78000"), LocalDate.now().minusDays(5)),
                 new LeadRecord(UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc"), "Blue Yonder", "contact@blueyonder.com", "Blue Yonder", "WON", "admin@leadflow.local", "Asha Admin", "Inbound", new BigDecimal("95000"), LocalDate.now().minusDays(9)),
@@ -35,7 +37,23 @@ public class LeadService {
                 new LeadRecord(UUID.fromString("22222222-aaaa-bbbb-cccc-222222222222"), "Contoso", "ceo@contoso.com", "Contoso", "WON", "rep@leadflow.local", "Ravi Rep", "Partner", new BigDecimal("110000"), LocalDate.now().minusDays(11)),
                 new LeadRecord(UUID.fromString("33333333-aaaa-bbbb-cccc-333333333333"), "Adventure Works", "founder@adventureworks.com", "Adventure Works", "OPEN", "manager@leadflow.local", "Maya Manager", "Inbound", new BigDecimal("54000"), LocalDate.now().minusDays(4)),
                 new LeadRecord(UUID.fromString("44444444-aaaa-bbbb-cccc-444444444444"), "Tailspin Toys", "ceo@tailspin.com", "Tailspin Toys", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Website", new BigDecimal("41000"), LocalDate.now().minusDays(6))
-        );
+        )));
+    }
+
+    public LeadResponse captureLead(CaptureRequest request) {
+        LeadRecord lead = new LeadRecord(
+                UUID.randomUUID(),
+                request.name(),
+                request.email(),
+                request.company() != null ? request.company() : "",
+                "OPEN",
+                "",
+                "Unassigned",
+                request.source() != null ? request.source() : "Website",
+                BigDecimal.ZERO,
+                LocalDate.now());
+        leads.add(lead);
+        return toResponse(lead);
     }
 
     public Optional<LeadResponse> findById(UUID id, Authentication authentication) {
