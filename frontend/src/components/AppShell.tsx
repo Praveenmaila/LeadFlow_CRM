@@ -88,6 +88,18 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
           <div className="rounded-[28px] border border-white/10 bg-slate-950/60 p-5 shadow-2xl shadow-cyan-950/20 backdrop-blur">
             {children}
           </div>
+
+          <footer className="mt-8 text-center text-xs text-slate-500 pb-2">
+            Built for{' '}
+            <a
+              href="https://digitalheroesco.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 transition hover:underline"
+            >
+              Digital Heroes
+            </a>
+          </footer>
         </div>
       </div>
     </div>

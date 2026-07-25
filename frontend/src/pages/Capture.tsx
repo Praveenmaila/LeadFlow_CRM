@@ -64,6 +64,17 @@ const CapturePage: React.FC = () => {
               Go to Sign In
             </Link>
           </div>
+          <footer className="mt-8 text-center text-xs text-slate-500 w-full relative z-10 pb-4">
+            Built for{' '}
+            <a
+              href="https://digitalheroesco.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 transition hover:underline"
+            >
+              Digital Heroes Training Task
+            </a>
+          </footer>
         </div>
       </div>
     )
@@ -203,6 +214,17 @@ const CapturePage: React.FC = () => {
             </p>
           </form>
         </div>
+        <footer className="mt-8 text-center text-xs text-slate-500 w-full relative z-10 pb-4">
+          Built for{' '}
+          <a
+            href="https://digitalheroesco.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 transition hover:underline"
+          >
+            Digital Heroes Training Task
+          </a>
+        </footer>
       </div>
     </div>
   )
