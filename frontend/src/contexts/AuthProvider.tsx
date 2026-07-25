@@ -34,6 +34,9 @@ const hydrateSession = (): AuthSession | null => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const initialSession = hydrateSession()
+  if (initialSession?.accessToken) {
+    api.defaults.headers.common.Authorization = `Bearer ${initialSession.accessToken}`
+  }
   const [user, setUser] = useState<User | null>(initialSession?.user ?? null)
   const [token, setToken] = useState<string | null>(initialSession?.accessToken ?? null)
   const [isLoading, setIsLoading] = useState(Boolean(initialSession?.accessToken))
