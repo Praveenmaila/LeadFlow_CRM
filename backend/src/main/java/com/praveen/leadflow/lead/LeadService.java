@@ -16,6 +16,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.praveen.leadflow.user.AppUser;
 import com.praveen.leadflow.user.DemoUserService;
 
 @Service
@@ -23,9 +27,11 @@ public class LeadService {
 
     private final List<LeadRecord> leads;
     private final DemoUserService userService;
+    private final ActivityService activityService;
 
-    public LeadService(DemoUserService userService) {
+    public LeadService(DemoUserService userService, ActivityService activityService) {
         this.userService = userService;
+        this.activityService = activityService;
         this.leads = Collections.synchronizedList(new ArrayList<>(List.of(
                 new LeadRecord(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Acme Retail", "ceo@acme.com", "Acme Retail", "OPEN", "manager@leadflow.local", "Maya Manager", "Website", new BigDecimal("45000"), LocalDate.now().minusDays(2)),
                 new LeadRecord(UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Northwind Traders", "ops@northwind.com", "Northwind Traders", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Referral", new BigDecimal("78000"), LocalDate.now().minusDays(5)),
@@ -40,13 +46,151 @@ public class LeadService {
         )));
     }
 
+
+    public LeadResponse updateStatus(UUID leadId, String newStatus, Authentication authentication) {
+        String email = authentication.getName();
+        AppUser currentUser = userService.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+        synchronized (leads) {
+            LeadRecord existingLead = leads.stream()
+                    .filter(lead -> lead.id().equals(leadId))
+                    .findFirst()
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lead not found"));
+
+            // Role-based authorization check:
+            // Admin & Manager can update status of any lead.
+            // Sales Rep can only update if lead is assigned to them.
+            if (!currentUser.role().equals("ADMIN") && !currentUser.role().equals("MANAGER")) {
+                if (!existingLead.ownerEmail().equalsIgnoreCase(email)) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update status of leads assigned to you");
+                }
+                
+                // Sales representatives can only transition status: Open -> Contacted or Contacted -> Qualified.
+                boolean validTransition = 
+                    (existingLead.status().equalsIgnoreCase("OPEN") && newStatus.equalsIgnoreCase("CONTACTED")) ||
+                    (existingLead.status().equalsIgnoreCase("CONTACTED") && newStatus.equalsIgnoreCase("QUALIFIED"));
+                
+                if (!validTransition) {
+                    throw new ResponseStatusException(HttpStatus.FORBIDDEN, 
+                        "Sales representatives can only transition status from Open to Contacted or Contacted to Qualified");
+                }
+            }
+
+            String oldStatus = existingLead.status();
+            
+            // Create updated lead record
+            LeadRecord updatedLead = new LeadRecord(
+                    existingLead.id(),
+                    existingLead.name(),
+                    existingLead.email(),
+                    existingLead.company(),
+                    newStatus.toUpperCase(),
+                    existingLead.ownerEmail(),
+                    existingLead.ownerName(),
+                    existingLead.source(),
+                    existingLead.amount(),
+                    existingLead.createdAt()
+            );
+
+            // Replace in the in-memory list
+            int index = leads.indexOf(existingLead);
+            leads.set(index, updatedLead);
+
+            // Log activity: "Status changed from X to Y by User."
+            activityService.logActivity(leadId, 
+                    String.format("Status changed from %s to %s by %s.", oldStatus, newStatus, currentUser.fullName()), 
+                    currentUser.fullName());
+
+            return toResponse(updatedLead);
+        }
+    }
+
+    public LeadResponse assignOwner(UUID leadId, String ownerEmail, Authentication authentication) {
+        String assignerEmail = authentication.getName();
+        AppUser assigner = userService.findByEmail(assignerEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+        if (!assigner.role().equals("ADMIN") && !assigner.role().equals("MANAGER")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Administrators and Managers can assign leads");
+        }
+
+        AppUser assignee = userService.findByEmail(ownerEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Assignee user not found"));
+
+        synchronized (leads) {
+            LeadRecord existingLead = leads.stream()
+                    .filter(lead -> lead.id().equals(leadId))
+                    .findFirst()
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lead not found"));
+
+            String oldOwnerName = existingLead.ownerName();
+            String oldStatus = existingLead.status();
+            String targetStatus = oldStatus;
+
+            // When an owner is assigned, status automatically becomes: Open (if it was New)
+            if (oldStatus.equalsIgnoreCase("NEW")) {
+                targetStatus = "OPEN";
+            }
+
+            LeadRecord updatedLead = new LeadRecord(
+                    existingLead.id(),
+                    existingLead.name(),
+                    existingLead.email(),
+                    existingLead.company(),
+                    targetStatus,
+                    assignee.email(),
+                    assignee.fullName(),
+                    existingLead.source(),
+                    existingLead.amount(),
+                    existingLead.createdAt()
+            );
+
+            int index = leads.indexOf(existingLead);
+            leads.set(index, updatedLead);
+
+            // Record assignment in timeline
+            activityService.logActivity(leadId, 
+                    String.format("Owner assigned to %s by %s.", assignee.fullName(), assigner.fullName()), 
+                    assigner.fullName());
+
+            // Record status change in timeline if updated
+            if (!oldStatus.equalsIgnoreCase(targetStatus)) {
+                activityService.logActivity(leadId, 
+                        String.format("Status changed from %s to %s by %s.", oldStatus, targetStatus, assigner.fullName()), 
+                        assigner.fullName());
+            }
+
+            return toResponse(updatedLead);
+        }
+    }
+
+    public void deleteLead(UUID leadId, Authentication authentication) {
+        String email = authentication.getName();
+        AppUser currentUser = userService.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+        if (!currentUser.role().equals("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Administrators can delete leads");
+        }
+
+        synchronized (leads) {
+            LeadRecord existingLead = leads.stream()
+                    .filter(lead -> lead.id().equals(leadId))
+                    .findFirst()
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lead not found"));
+
+            leads.remove(existingLead);
+        }
+    }
+
     public LeadResponse captureLead(CaptureRequest request) {
         LeadRecord lead = new LeadRecord(
                 UUID.randomUUID(),
                 request.name(),
                 request.email(),
                 request.company() != null ? request.company() : "",
-                "OPEN",
+                "NEW",
                 "",
                 "Unassigned",
                 request.source() != null ? request.source() : "Website",
@@ -137,6 +281,7 @@ public class LeadService {
                 lead.email(),
                 lead.company(),
                 lead.status(),
+                lead.ownerEmail(),
                 lead.ownerName(),
                 lead.source(),
                 lead.amount(),

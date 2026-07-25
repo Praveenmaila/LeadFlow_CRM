@@ -10,6 +10,7 @@ public record LeadResponse(
         String email,
         String company,
         String status,
+        String ownerEmail,
         String ownerName,
         String source,
         BigDecimal amount,

@@ -30,6 +30,7 @@ export type Lead = {
   email: string
   company: string
   status: string
+  ownerEmail: string
   ownerName: string
   source: string
   amount: number
@@ -46,5 +47,12 @@ export type Note = {
   id: string
   authorName: string
   content: string
+  createdAt: string
+}
+
+export type Activity = {
+  id: string
+  content: string
+  creatorName: string
   createdAt: string
 }
