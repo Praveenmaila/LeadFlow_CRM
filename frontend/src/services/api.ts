@@ -3,8 +3,14 @@ import axios from 'axios'
 const AUTH_STORAGE_KEY = 'leadflow.auth'
 export const UNAUTHORIZED_EVENT = 'leadflow:unauthorized'
 
+// In production (Vercel), call the Railway backend directly.
+// In local dev, use the Vite dev-server proxy (/api → localhost:8081).
+const DEFAULT_API_URL = import.meta.env.PROD
+  ? 'https://leadflowcrm-production.up.railway.app/api'
+  : '/api'
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: import.meta.env.VITE_API_URL || DEFAULT_API_URL,
   headers: { 'Content-Type': 'application/json' }
 })
 
