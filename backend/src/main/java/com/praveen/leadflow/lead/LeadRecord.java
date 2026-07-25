@@ -8,6 +8,7 @@ public record LeadRecord(
         UUID id,
         String name,
         String email,
+        String phone,
         String company,
         String status,
         String ownerEmail,

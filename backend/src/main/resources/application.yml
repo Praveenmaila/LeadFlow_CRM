@@ -21,4 +21,4 @@ jwt:
   expiration-ms: ${JWT_EXP_MS:900000}
 
 server:
-  port: 8081
+  port: ${PORT:8081}

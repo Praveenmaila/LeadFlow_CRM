@@ -1,0 +1,29 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=leadflow-prod-secret-key-super-secure-32chars
+    networks:
+      - leadflow-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - leadflow-network
+    restart: unless-stopped
+
+networks:
+  leadflow-network:
+    driver: bridge

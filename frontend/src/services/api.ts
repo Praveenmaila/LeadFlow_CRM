@@ -4,7 +4,7 @@ const AUTH_STORAGE_KEY = 'leadflow.auth'
 export const UNAUTHORIZED_EVENT = 'leadflow:unauthorized'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   headers: { 'Content-Type': 'application/json' }
 })
 

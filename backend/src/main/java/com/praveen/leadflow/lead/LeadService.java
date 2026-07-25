@@ -33,16 +33,16 @@ public class LeadService {
         this.userService = userService;
         this.activityService = activityService;
         this.leads = Collections.synchronizedList(new ArrayList<>(List.of(
-                new LeadRecord(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Acme Retail", "ceo@acme.com", "Acme Retail", "OPEN", "manager@leadflow.local", "Maya Manager", "Website", new BigDecimal("45000"), LocalDate.now().minusDays(2)),
-                new LeadRecord(UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Northwind Traders", "ops@northwind.com", "Northwind Traders", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Referral", new BigDecimal("78000"), LocalDate.now().minusDays(5)),
-                new LeadRecord(UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc"), "Blue Yonder", "contact@blueyonder.com", "Blue Yonder", "WON", "admin@leadflow.local", "Asha Admin", "Inbound", new BigDecimal("95000"), LocalDate.now().minusDays(9)),
-                new LeadRecord(UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd"), "Globex", "sales@globex.com", "Globex", "OPEN", "rep@leadflow.local", "Ravi Rep", "Outbound", new BigDecimal("26000"), LocalDate.now().minusDays(1)),
-                new LeadRecord(UUID.fromString("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), "Initech", "lead@initech.com", "Initech", "LOST", "manager@leadflow.local", "Maya Manager", "Event", new BigDecimal("12000"), LocalDate.now().minusDays(14)),
-                new LeadRecord(UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"), "Fabrikam", "hello@fabrikam.com", "Fabrikam", "QUALIFIED", "manager@leadflow.local", "Maya Manager", "Website", new BigDecimal("63000"), LocalDate.now().minusDays(3)),
-                new LeadRecord(UUID.fromString("11111111-aaaa-bbbb-cccc-111111111111"), "Litware", "team@litware.com", "Litware", "OPEN", "admin@leadflow.local", "Asha Admin", "Referral", new BigDecimal("33000"), LocalDate.now().minusDays(7)),
-                new LeadRecord(UUID.fromString("22222222-aaaa-bbbb-cccc-222222222222"), "Contoso", "ceo@contoso.com", "Contoso", "WON", "rep@leadflow.local", "Ravi Rep", "Partner", new BigDecimal("110000"), LocalDate.now().minusDays(11)),
-                new LeadRecord(UUID.fromString("33333333-aaaa-bbbb-cccc-333333333333"), "Adventure Works", "founder@adventureworks.com", "Adventure Works", "OPEN", "manager@leadflow.local", "Maya Manager", "Inbound", new BigDecimal("54000"), LocalDate.now().minusDays(4)),
-                new LeadRecord(UUID.fromString("44444444-aaaa-bbbb-cccc-444444444444"), "Tailspin Toys", "ceo@tailspin.com", "Tailspin Toys", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Website", new BigDecimal("41000"), LocalDate.now().minusDays(6))
+                new LeadRecord(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), "Acme Retail", "ceo@acme.com", null, "Acme Retail", "OPEN", "manager@leadflow.local", "Maya Manager", "Website", new BigDecimal("45000"), LocalDate.now().minusDays(2)),
+                new LeadRecord(UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "Northwind Traders", "ops@northwind.com", null, "Northwind Traders", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Referral", new BigDecimal("78000"), LocalDate.now().minusDays(5)),
+                new LeadRecord(UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc"), "Blue Yonder", "contact@blueyonder.com", null, "Blue Yonder", "WON", "admin@leadflow.local", "Asha Admin", "Inbound", new BigDecimal("95000"), LocalDate.now().minusDays(9)),
+                new LeadRecord(UUID.fromString("dddddddd-dddd-dddd-dddd-dddddddddddd"), "Globex", "sales@globex.com", null, "Globex", "OPEN", "rep@leadflow.local", "Ravi Rep", "Outbound", new BigDecimal("26000"), LocalDate.now().minusDays(1)),
+                new LeadRecord(UUID.fromString("eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"), "Initech", "lead@initech.com", null, "Initech", "LOST", "manager@leadflow.local", "Maya Manager", "Event", new BigDecimal("12000"), LocalDate.now().minusDays(14)),
+                new LeadRecord(UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff"), "Fabrikam", "hello@fabrikam.com", null, "Fabrikam", "QUALIFIED", "manager@leadflow.local", "Maya Manager", "Website", new BigDecimal("63000"), LocalDate.now().minusDays(3)),
+                new LeadRecord(UUID.fromString("11111111-aaaa-bbbb-cccc-111111111111"), "Litware", "team@litware.com", null, "Litware", "OPEN", "admin@leadflow.local", "Asha Admin", "Referral", new BigDecimal("33000"), LocalDate.now().minusDays(7)),
+                new LeadRecord(UUID.fromString("22222222-aaaa-bbbb-cccc-222222222222"), "Contoso", "ceo@contoso.com", null, "Contoso", "WON", "rep@leadflow.local", "Ravi Rep", "Partner", new BigDecimal("110000"), LocalDate.now().minusDays(11)),
+                new LeadRecord(UUID.fromString("33333333-aaaa-bbbb-cccc-333333333333"), "Adventure Works", "founder@adventureworks.com", null, "Adventure Works", "OPEN", "manager@leadflow.local", "Maya Manager", "Inbound", new BigDecimal("54000"), LocalDate.now().minusDays(4)),
+                new LeadRecord(UUID.fromString("44444444-aaaa-bbbb-cccc-444444444444"), "Tailspin Toys", "ceo@tailspin.com", null, "Tailspin Toys", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Website", new BigDecimal("41000"), LocalDate.now().minusDays(6))
         )));
     }
 
@@ -84,6 +84,7 @@ public class LeadService {
                     existingLead.id(),
                     existingLead.name(),
                     existingLead.email(),
+                    existingLead.phone(),
                     existingLead.company(),
                     newStatus.toUpperCase(),
                     existingLead.ownerEmail(),
@@ -137,6 +138,7 @@ public class LeadService {
                     existingLead.id(),
                     existingLead.name(),
                     existingLead.email(),
+                    existingLead.phone(),
                     existingLead.company(),
                     targetStatus,
                     assignee.email(),
@@ -189,6 +191,7 @@ public class LeadService {
                 UUID.randomUUID(),
                 request.name(),
                 request.email(),
+                request.phone() != null ? request.phone() : "",
                 request.company() != null ? request.company() : "",
                 "NEW",
                 "",
@@ -279,6 +282,7 @@ public class LeadService {
                 lead.id(),
                 lead.name(),
                 lead.email(),
+                lead.phone(),
                 lead.company(),
                 lead.status(),
                 lead.ownerEmail(),

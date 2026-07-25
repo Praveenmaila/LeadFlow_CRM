@@ -32,6 +32,107 @@ const getStatusLabel = (status: string) => {
   return labels[status?.toUpperCase()] || status
 }
 
+/* ─── Timeline Icon Helper ─── */
+const getTimelineIcon = (content: string) => {
+  const c = content.toLowerCase()
+
+  // Won status
+  if (c.includes('to won')) {
+    return {
+      bg: 'bg-emerald-500/15 border-emerald-400/40',
+      icon: (
+        <svg className="h-4 w-4 text-emerald-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+      )
+    }
+  }
+
+  // Lost status
+  if (c.includes('to lost')) {
+    return {
+      bg: 'bg-rose-500/15 border-rose-400/40',
+      icon: (
+        <svg className="h-4 w-4 text-rose-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+        </svg>
+      )
+    }
+  }
+
+  // Owner assignment
+  if (c.includes('owner assigned') || c.includes('assigned to')) {
+    return {
+      bg: 'bg-violet-500/15 border-violet-400/40',
+      icon: (
+        <svg className="h-4 w-4 text-violet-400" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+        </svg>
+      )
+    }
+  }
+
+  // Qualified status
+  if (c.includes('to qualified')) {
+    return {
+      bg: 'bg-amber-500/15 border-amber-400/40',
+      icon: (
+        <svg className="h-4 w-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      )
+    }
+  }
+
+  // Contacted status
+  if (c.includes('to contacted')) {
+    return {
+      bg: 'bg-purple-500/15 border-purple-400/40',
+      icon: (
+        <svg className="h-4 w-4 text-purple-400" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+        </svg>
+      )
+    }
+  }
+
+  // Open status
+  if (c.includes('to open')) {
+    return {
+      bg: 'bg-cyan-500/15 border-cyan-400/40',
+      icon: (
+        <svg className="h-4 w-4 text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+        </svg>
+      )
+    }
+  }
+
+  // Default: generic clock
+  return {
+    bg: 'bg-cyan-500/10 border-cyan-500/30',
+    icon: (
+      <svg className="h-4 w-4 text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+      </svg>
+    )
+  }
+}
+
+/* ─── Toast Component ─── */
+const SuccessToast: React.FC<{ message: string; visible: boolean }> = ({ message, visible }) => (
+  <div
+    className={`fixed top-6 right-6 z-50 flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-emerald-500/15 px-5 py-3.5 shadow-2xl shadow-emerald-900/30 backdrop-blur-xl transition-all duration-500 ${visible ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0 pointer-events-none'}`}
+  >
+    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-400/20">
+      <svg className="h-4 w-4 text-emerald-300" viewBox="0 0 20 20" fill="currentColor">
+        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      </svg>
+    </span>
+    <p className="text-sm font-medium text-emerald-100">{message}</p>
+  </div>
+)
+
 const LeadDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -63,6 +164,14 @@ const LeadDetailPage: React.FC = () => {
 
   // Delete lead state
   const [deleting, setDeleting] = useState(false)
+
+  // Toast state
+  const [toast, setToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false })
+
+  const showToast = (message: string) => {
+    setToast({ message, visible: true })
+    setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000)
+  }
 
   useEffect(() => {
     let ignore = false
@@ -153,6 +262,7 @@ const LeadDetailPage: React.FC = () => {
       await api.post(`/leads/${id}/notes`, { content: noteContent.trim() })
       setNoteContent('')
       await loadNotes()
+      showToast('Note added successfully')
     } catch (err: any) {
       setNoteError(err.response?.data?.message ?? 'Failed to add note.')
     } finally {
@@ -169,6 +279,7 @@ const LeadDetailPage: React.FC = () => {
       const response = await api.put<Lead>(`/leads/${id}/status`, { status: newStatus })
       setLead(response.data)
       await loadActivities()
+      showToast(`Status updated to ${getStatusLabel(newStatus)}`)
     } catch (err: any) {
       setStatusError(err.response?.data?.message ?? 'Failed to update status.')
     } finally {
@@ -185,6 +296,8 @@ const LeadDetailPage: React.FC = () => {
       const response = await api.put<Lead>(`/leads/${id}/assign`, { ownerEmail })
       setLead(response.data)
       await loadActivities()
+      const assigneeName = teamMembers.find(m => m.email === ownerEmail)?.fullName ?? ownerEmail
+      showToast(`Lead assigned to ${assigneeName}`)
     } catch (err: any) {
       setAssignError(err.response?.data?.message ?? 'Failed to assign owner.')
     } finally {
@@ -237,6 +350,9 @@ const LeadDetailPage: React.FC = () => {
 
   return (
     <AppShell>
+      {/* Success Toast */}
+      <SuccessToast message={toast.message} visible={toast.visible} />
+
       <div className="space-y-6 text-slate-100">
         {/* Back button */}
         <button
@@ -362,37 +478,38 @@ const LeadDetailPage: React.FC = () => {
                       ) : activities.length === 0 ? (
                         <p className="text-sm text-slate-500">No activity recorded yet.</p>
                       ) : (
-                        activities.map((activity, actIdx) => (
-                          <li key={activity.id}>
-                            <div className="relative pb-8">
-                              {actIdx !== activities.length - 1 ? (
-                                <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-white/10" aria-hidden="true" />
-                              ) : null}
-                              <div className="relative flex space-x-3">
-                                <div>
-                                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30">
-                                    <svg className="h-4 w-4 text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
-                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                                    </svg>
-                                  </span>
-                                </div>
-                                <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                        activities.map((activity, actIdx) => {
+                          const iconData = getTimelineIcon(activity.content)
+                          return (
+                            <li key={activity.id}>
+                              <div className="relative pb-8">
+                                {actIdx !== activities.length - 1 ? (
+                                  <span className="absolute left-4 top-4 -ml-px h-full w-0.5 bg-white/10" aria-hidden="true" />
+                                ) : null}
+                                <div className="relative flex space-x-3">
                                   <div>
-                                    <p className="text-sm text-slate-200">
-                                      {activity.content}{' '}
-                                      <span className="font-semibold text-cyan-200">({activity.creatorName})</span>
-                                    </p>
+                                    <span className={`flex h-8 w-8 items-center justify-center rounded-full border ${iconData.bg}`}>
+                                      {iconData.icon}
+                                    </span>
                                   </div>
-                                  <div className="whitespace-nowrap text-right text-xs text-slate-400">
-                                    <time title={dayjs(activity.createdAt).format('MMM D, YYYY h:mm A')}>
-                                      {dayjs(activity.createdAt).fromNow()}
-                                    </time>
+                                  <div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                    <div>
+                                      <p className="text-sm text-slate-200">
+                                        {activity.content}{' '}
+                                        <span className="font-semibold text-cyan-200">({activity.creatorName})</span>
+                                      </p>
+                                    </div>
+                                    <div className="whitespace-nowrap text-right text-xs text-slate-400">
+                                      <time title={dayjs(activity.createdAt).format('MMM D, YYYY h:mm A')}>
+                                        {dayjs(activity.createdAt).fromNow()}
+                                      </time>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          </li>
-                        ))
+                            </li>
+                          )
+                        })
                       )}
                     </ul>
                   </div>
@@ -415,6 +532,14 @@ const LeadDetailPage: React.FC = () => {
                           {lead.email}
                         </a>
                       </div>
+                      {lead.phone ? (
+                        <div>
+                          <p className="text-xs text-slate-500">Phone</p>
+                          <a href={`tel:${lead.phone}`} className="text-sm font-semibold text-cyan-400 hover:text-cyan-300 transition block">
+                            {lead.phone}
+                          </a>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
 
