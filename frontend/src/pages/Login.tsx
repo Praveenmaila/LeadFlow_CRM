@@ -104,12 +104,12 @@ const LoginPage: React.FC = () => {
 
               <label className="mt-6 block space-y-2">
                 <span className="text-sm text-slate-300">Email</span>
-                <input {...register('email', { required: true })} required type="email" className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60" />
+                <input {...register('email', { required: true })} required type="email" autoComplete="email" autoCapitalize="none" className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60" />
               </label>
 
               <label className="mt-4 block space-y-2">
                 <span className="text-sm text-slate-300">Password</span>
-                <input {...register('password', { required: true })} required type="password" className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60" />
+                <input {...register('password', { required: true })} required type="password" autoComplete="current-password" className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-400/60" />
               </label>
 
               <button
