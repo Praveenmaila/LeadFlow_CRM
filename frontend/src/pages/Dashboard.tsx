@@ -1,4 +1,5 @@
 import React, { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import dayjs from 'dayjs'
 import api from '../services/api'
 import { AppShell } from '../components/AppShell'
@@ -84,7 +85,7 @@ const DashboardPage: React.FC = () => {
       <div className="space-y-6 text-slate-100">
         <section className="grid gap-4 md:grid-cols-4">
           <article className="rounded-3xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-            <p className="text-xs uppercase tracking-[0.24em] text-cyan-200/80">Matching leads</p>
+            <p className="text-xs uppercase tracking-[0.24em] text-cyan-200/80">Total Leads</p>
             <p className="mt-3 text-3xl font-black text-white">{data?.page.totalItems ?? 0}</p>
           </article>
           {roleSummary.map(item => (
@@ -180,8 +181,8 @@ const DashboardPage: React.FC = () => {
         <section className="overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/80">
           <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
             <div>
-              <h3 className="text-lg font-semibold text-white">Lead pipeline</h3>
-              <p className="text-sm text-slate-400">Results come from the Spring Boot backend.</p>
+              <h3 className="text-lg font-semibold text-white">Lead Pipeline</h3>
+              <p className="text-sm text-slate-400">Click on a lead name to view details and add notes.</p>
             </div>
             <p className="text-sm text-slate-400">
               Page {data?.page.page ? data.page.page + 1 : 1} of {data?.page.totalPages || 1}
@@ -205,14 +206,14 @@ const DashboardPage: React.FC = () => {
                 {loading ? (
                   <tr>
                     <td className="px-5 py-10 text-slate-300" colSpan={7}>
-                      Loading leads from the backend...
+                      Loading leads...
                     </td>
                   </tr>
                 ) : data?.items.length ? (
                   data.items.map(lead => (
                     <tr key={lead.id} className="hover:bg-white/5">
                       <td className="px-5 py-4">
-                        <div className="font-medium text-white">{lead.name}</div>
+                        <Link to={`/leads/${lead.id}`} className="font-medium text-white hover:text-cyan-300 transition">{lead.name}</Link>
                         <div className="text-xs text-slate-400">{lead.email}</div>
                       </td>
                       <td className="px-5 py-4 text-slate-200">{lead.company}</td>

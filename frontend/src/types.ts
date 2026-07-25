@@ -41,3 +41,10 @@ export type LeadPageResponse = {
   page: PageInfo
   totals: LeadTotals
 }
+
+export type Note = {
+  id: string
+  authorName: string
+  content: string
+  createdAt: string
+}

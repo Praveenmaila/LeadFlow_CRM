@@ -6,6 +6,7 @@ import DashboardPage from './pages/Dashboard'
 import TeamPage from './pages/Team'
 import ReportsPage from './pages/Reports'
 import UsersPage from './pages/Users'
+import LeadDetailPage from './pages/LeadDetail'
 
 const App: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ const App: React.FC = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+      <Route path="/leads/:id" element={<ProtectedRoute><LeadDetailPage /></ProtectedRoute>} />
       <Route path="/team" element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER', 'SALES_REP']}><TeamPage /></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute allowedRoles={['ADMIN', 'MANAGER']}><ReportsPage /></ProtectedRoute>} />
       <Route path="/users" element={<ProtectedRoute allowedRoles={['ADMIN']}><UsersPage /></ProtectedRoute>} />

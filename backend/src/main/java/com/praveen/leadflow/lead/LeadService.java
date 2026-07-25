@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,17 @@ public class LeadService {
                 new LeadRecord(UUID.fromString("33333333-aaaa-bbbb-cccc-333333333333"), "Adventure Works", "founder@adventureworks.com", "Adventure Works", "OPEN", "manager@leadflow.local", "Maya Manager", "Inbound", new BigDecimal("54000"), LocalDate.now().minusDays(4)),
                 new LeadRecord(UUID.fromString("44444444-aaaa-bbbb-cccc-444444444444"), "Tailspin Toys", "ceo@tailspin.com", "Tailspin Toys", "QUALIFIED", "rep@leadflow.local", "Ravi Rep", "Website", new BigDecimal("41000"), LocalDate.now().minusDays(6))
         );
+    }
+
+    public Optional<LeadResponse> findById(UUID id, Authentication authentication) {
+        String email = authentication.getName();
+        String role = userService.findByEmail(email).map(user -> user.role()).orElse("SALES_REP");
+
+        return leads.stream()
+                .filter(lead -> lead.id().equals(id))
+                .filter(lead -> isVisibleForRole(role, email, lead))
+                .findFirst()
+                .map(this::toResponse);
     }
 
     public LeadPageResponse search(Authentication authentication, String search, String status, String owner, int page, int size) {
